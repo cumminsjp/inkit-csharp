@@ -1,0 +1,19 @@
+{
+  "first_name": "Jessica",
+  "last_name": "Alba",
+  "company": "Actress Company LLC",
+  "email": "j.alba@gmail.com",
+  "address": {
+    "street": "222 Fake Ln",
+    "unit": "St 42",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": "90210",
+    "country": "US"
+  },
+  "tags": ["december-campaign"],
+  "custom_data": {
+    "custom_field_a": "custom data",
+    "new_custom_field": "new data"
+  }
+}

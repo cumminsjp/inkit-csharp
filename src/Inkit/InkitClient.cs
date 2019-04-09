@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,8 +23,10 @@ namespace Inkit
 		/// </summary>
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
+		private HttpClient _apiClient;
+
 		/// <summary>
-		/// Sends the specified recipient.
+		/// Sends the specified recipient via the WebHook
 		/// </summary>
 		/// <param name="recipient">The recipient.</param>
 		/// <exception cref="TemplateNotFoundException"></exception>
@@ -208,6 +211,88 @@ namespace Inkit
 				}
 				
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the API client to Inkit's public API
+		/// https://docs.inkit.com/#authentication 
+		/// </summary>
+		/// <value>
+		/// The API client.
+		/// </value>
+		private HttpClient ApiClient
+		{
+			get => _apiClient ?? (_apiClient = CreateApiClient());
+
+			set => _apiClient = value;
+		}
+
+
+		/// <summary>
+		/// Creates the API client.
+		/// https://docs.inkit.com/#authentication
+		/// </summary>
+		/// <returns></returns>
+		private HttpClient CreateApiClient()
+		{
+			var client = new HttpClient();
+
+			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Inkit", Settings.PublicApiAuthorizationToken);
+			// client.DefaultRequestHeaders.Add("Authorization", $"Inkit {Settings.PublicApiAuthorizationToken}");
+			client.DefaultRequestHeaders.Add("Accept", "application/json");
+
+			return client;
+		}
+
+		/// <summary>
+		/// Gets the contacts.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<JArray> GetContacts()
+		{
+			string url = $"{PublicApiUrl}/contacts/";
+			
+			var result = await ApiClient.GetStringAsync(url);
+
+			var  responseObject = JObject.Parse(result);
+			
+			// responseObject["response"];
+
+			return (JArray)responseObject["body"];
+		}
+
+		 
+
+		/// <summary>
+		/// Gets the public API URL, including the version.
+		/// </summary>
+		/// <value>
+		/// The public API URL.
+		/// </value>
+		public string PublicApiUrl => $"{Settings.PublicApiUrl}/v{Settings.PublicApiVersion}";
+
+
+		/// <summary>
+		/// Creates the contact.
+		/// <see cref="Https://docs.inkit.com/#post-v1-contacts">https://docs.inkit.com/#post-v1-contacts</see>
+		/// </summary>
+		/// <param name="contact">The contact.</param>
+		/// <returns></returns>
+		public async Task<Contact>   CreateContact(Contact contact)
+		{
+			string url = $"{PublicApiUrl}/contacts/";
+
+			var json = JsonConvert.SerializeObject(contact);
+
+			var content = new StringContent(JsonConvert.SerializeObject(contact), Encoding.UTF8, "application/json");
+
+			var response = await ApiClient.PostAsync(url, content);
+
+			var body = response.Content.ReadAsStringAsync();
+
+			Console.WriteLine(body);
+
+			return null;
 		}
 	}
 

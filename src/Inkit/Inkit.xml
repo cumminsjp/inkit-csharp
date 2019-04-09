@@ -1,0 +1,373 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Inkit</name>
+    </assembly>
+    <members>
+        <member name="T:Inkit.Exceptions.NotFoundException">
+            <summary>
+            A not found exception
+            </summary>
+            <seealso cref="T:System.Exception" />
+        </member>
+        <member name="M:Inkit.Exceptions.NotFoundException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Inkit.Exceptions.NotFoundException"/> class.
+            </summary>
+            <param name="message">The message that describes the error.</param>
+        </member>
+        <member name="M:Inkit.Exceptions.NotFoundException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Inkit.Exceptions.NotFoundException"/> class.
+            </summary>
+            <param name="message">The error message that explains the reason for the exception.</param>
+            <param name="innerException">The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        </member>
+        <member name="T:Inkit.Exceptions.TemplateNotFoundException">
+            <summary>
+            Exception when template is not found
+            </summary>
+            <seealso cref="T:Inkit.Exceptions.NotFoundException" />
+        </member>
+        <member name="M:Inkit.Exceptions.TemplateNotFoundException.#ctor(System.String,System.String)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Inkit.Exceptions.TemplateNotFoundException" /> class.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="description">The description.</param>
+        </member>
+        <member name="P:Inkit.Exceptions.TemplateNotFoundException.Description">
+            <summary>
+                Gets or sets the description.
+            </summary>
+            <value>
+                The description.
+            </value>
+        </member>
+        <member name="T:Inkit.Helpers.EnumerableHelper">
+            <summary>
+            Helper class for IEnumerable
+            </summary>
+        </member>
+        <member name="M:Inkit.Helpers.EnumerableHelper.ToNumberedListString(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+                Converts items to a numbered list
+            </summary>
+            <param name="items">The items.</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Inkit.Helpers.EnumerableHelper.ToCSV``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Converts a list of items to a comma separated string value.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="items">The items.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.Helpers.EnumerableHelper.ToCharacterSeparatedValueString``1(System.Collections.Generic.IEnumerable{``0},System.String)">
+            <summary>
+            Converts a list of items to a character separated string value.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="items">The items.</param>
+            <param name="delimiter">The delimiter.</param>
+            <returns></returns>
+        </member>
+        <member name="F:Inkit.InkitClient.Log">
+            <summary>
+                The Log (Common.Logging)
+            </summary>
+        </member>
+        <member name="M:Inkit.InkitClient.Send(Inkit.Models.Recipient)">
+            <summary>
+            Sends the specified recipient via the WebHook
+            </summary>
+            <param name="recipient">The recipient.</param>
+            <exception cref="T:Inkit.Exceptions.TemplateNotFoundException"></exception>
+        </member>
+        <member name="P:Inkit.InkitClient.ApiClient">
+            <summary>
+            Gets or sets the API client to Inkit's public API
+            https://docs.inkit.com/#authentication 
+            </summary>
+            <value>
+            The API client.
+            </value>
+        </member>
+        <member name="M:Inkit.InkitClient.CreateApiClient">
+            <summary>
+            Creates the API client.
+            https://docs.inkit.com/#authentication
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.GetContacts">
+            <summary>
+            Gets the contacts.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Inkit.InkitClient.PublicApiUrl">
+            <summary>
+            Gets the public API URL, including the version.
+            </summary>
+            <value>
+            The public API URL.
+            </value>
+        </member>
+        <member name="M:Inkit.InkitClient.CreateContact(Inkit.Models.Contact)">
+            <summary>
+            Creates the contact.
+            <see cref="!:Https://docs.inkit.com/#post-v1-contacts">https://docs.inkit.com/#post-v1-contacts</see>
+            </summary>
+            <param name="contact">The contact.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Inkit.Models.Address">
+            <summary>
+                An Inkit.io Address record
+            </summary>
+        </member>
+        <member name="P:Inkit.Models.Address.Street">
+            <summary>
+                Gets or sets the street (excluding unit) of a mailing address
+            </summary>
+            <value>
+                The street.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Address.Unit">
+            <summary>
+                Gets or sets the unit portion of a mailing address
+            </summary>
+            <value>
+                The unit.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Address.City">
+            <summary>
+                Gets or sets the city for a mailing address
+            </summary>
+            <value>
+                The city.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Address.State">
+            <summary>
+                Gets or sets the state 2-character abbreviation for a mailing address (e.g. for California, use CA).
+            </summary>
+            <value>
+                The state.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Address.Zip">
+            <summary>
+                Gets or sets the ZIP Code
+            </summary>
+            <value>
+                The zip.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Address.Country">
+            <summary>
+                Gets or sets the country.
+            </summary>
+            <value>
+                The country.
+            </value>
+        </member>
+        <member name="M:Inkit.Models.Address.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:Inkit.Models.Contact">
+            <summary>
+                Model for Inkit Contacts
+                <see href="https://docs.inkit.com/#contacts">https://docs.inkit.com/#contacts</see>
+            </summary>
+        </member>
+        <member name="P:Inkit.Models.Contact.Id">
+            <summary>
+                Gets or sets the identifier.
+            </summary>
+            <value>
+                The identifier.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.CreatedAt">
+            <summary>
+                Gets or sets the TimeStamp when the contact was created
+            </summary>
+            <value>
+                The created at.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.UpdatedAt">
+            <summary>
+                Gets or sets the TimeStamp when the contact last modified
+            </summary>
+            <value>
+                The updated at.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.Source">
+            <summary>
+                Gets or sets the source.
+            </summary>
+            <value>
+                The source.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.FirstName">
+            <summary>
+                Gets or sets the first name.
+            </summary>
+            <value>
+                The first name.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.LastName">
+            <summary>
+                Gets or sets the last name.
+            </summary>
+            <value>
+                The last name.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.Company">
+            <summary>
+                Gets or sets the company.
+            </summary>
+            <value>
+                The company.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.Address">
+            <summary>
+                Gets or sets the mailing address.
+            </summary>
+            <value>
+                The address.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.Email">
+            <summary>
+                Gets or sets the email.
+            </summary>
+            <value>
+                The email.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.Tags">
+            <summary>
+                Gets or sets the tags.
+            </summary>
+            <value>
+                The tags.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Contact.CustomData">
+            <summary>
+                Gets or sets the custom data.
+            </summary>
+            <value>
+                The custom data.
+            </value>
+        </member>
+        <member name="M:Inkit.Models.Contact.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
+        </member>
+        <member name="T:Inkit.Models.Recipient">
+            <summary>
+                Inkit Recipient
+            </summary>
+        </member>
+        <member name="F:Inkit.Models.Recipient._country">
+            <summary>
+            The country abbreviation
+            </summary>
+        </member>
+        <member name="T:Inkit.Models.WebHookResponseModel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Inkit.Models.WebHookResponseModel.Status">
+            <summary>
+            Gets or sets the status.
+            </summary>
+            <value>
+            The status.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.WebHookResponseModel.Data">
+            <summary>
+            Gets or sets the data.
+            </summary>
+            <value>
+            The data.
+            </value>
+        </member>
+        <member name="T:Inkit.Core.Settings">
+            <summary>
+            Inkit Settings
+            </summary>
+            <seealso cref="T:Inkit.Core.SettingsBase" />
+        </member>
+        <member name="F:Inkit.Core.Settings.Log">
+            <summary>
+                The Log (Common.Logging)
+            </summary>
+        </member>
+        <member name="P:Inkit.Core.Settings.WebHookApiToken">
+            <summary>
+            Gets the web hook API token.
+            </summary>
+            <value>
+            The web hook API token.
+            </value>
+        </member>
+        <member name="P:Inkit.Core.Settings.PublicApiAuthorizationToken">
+            <summary>
+            Gets the public API authorization token.
+            </summary>
+            <value>
+            The public API authorization token.
+            </value>
+        </member>
+        <member name="P:Inkit.Core.Settings.WebHookUrl">
+            <summary>
+            Gets the web hook URL.
+            </summary>
+            <value>
+            The web hook URL.
+            </value>
+        </member>
+        <member name="P:Inkit.Core.Settings.PublicApiUrl">
+            <summary>
+            Gets the public API URL (e.g. http://api.inkit.io)
+             <see href="https://docs.inkit.com/#inkit-public-api">https://docs.inkit.com/#inkit-public-api</see> 
+            </summary>
+            <value>
+            The public API URL.
+            </value>
+        </member>
+        <member name="P:Inkit.Core.Settings.PublicApiVersion">
+            <summary>
+            Gets the public API version.
+            </summary>
+            <value>
+            The public API version.
+            </value>
+        </member>
+    </members>
+</doc>

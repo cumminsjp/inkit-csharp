@@ -25,4 +25,10 @@
     <ProjectReference Include="..\src\Inkit\Inkit.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestFiles\new-contact-1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

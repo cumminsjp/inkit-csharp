@@ -4,6 +4,10 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>C:\Users\Jay\gw\github.com\inkit-csharp\src\Inkit\Inkit.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
     <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
