@@ -27,7 +27,7 @@ namespace Inkit.Models
 		///     The created at.
 		/// </value>
 		[JsonProperty("created_at")]
-		public DateTime CreatedAt { get; set; }
+		public DateTime? CreatedAt { get; set; }
 
 		/// <summary>
 		///     Gets or sets the TimeStamp when the contact last modified
@@ -36,7 +36,7 @@ namespace Inkit.Models
 		///     The updated at.
 		/// </value>
 		[JsonProperty("updated_at")]
-		public DateTime UpdatedAt { get; set; }
+		public DateTime? UpdatedAt { get; set; }
 
 		/// <summary>
 		///     Gets or sets the source.

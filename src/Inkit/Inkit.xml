@@ -4,6 +4,41 @@
         <name>Inkit</name>
     </assembly>
     <members>
+        <member name="T:Inkit.Exceptions.ApiException">
+            <summary>
+                Generic API Exception with HTTP Status Code
+            </summary>
+            <seealso cref="T:System.Exception" />
+        </member>
+        <member name="M:Inkit.Exceptions.ApiException.#ctor(System.Net.HttpStatusCode,System.String,System.Exception)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Inkit.Exceptions.ApiException" /> class.
+            </summary>
+            <param name="statusCode">The status code.</param>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="M:Inkit.Exceptions.ApiException.#ctor(System.Net.HttpStatusCode,System.String)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Inkit.Exceptions.ApiException" /> class.
+            </summary>
+            <param name="statusCode">The status code.</param>
+            <param name="message">The message.</param>
+        </member>
+        <member name="M:Inkit.Exceptions.ApiException.#ctor(System.Net.HttpStatusCode)">
+            <summary>
+                Initializes a new instance of the <see cref="T:Inkit.Exceptions.ApiException" /> class.
+            </summary>
+            <param name="statusCode">The status code.</param>
+        </member>
+        <member name="P:Inkit.Exceptions.ApiException.StatusCode">
+            <summary>
+                Gets the status code.
+            </summary>
+            <value>
+                The status code.
+            </value>
+        </member>
         <member name="T:Inkit.Exceptions.NotFoundException">
             <summary>
             A not found exception
@@ -73,55 +108,150 @@
             <param name="delimiter">The delimiter.</param>
             <returns></returns>
         </member>
+        <member name="T:Inkit.InkitClient">
+            <summary>
+            Inkit API Client
+            https://docs.inkit.com
+            
+            </summary>
+        </member>
         <member name="F:Inkit.InkitClient.Log">
             <summary>
                 The Log (Common.Logging)
             </summary>
         </member>
+        <member name="P:Inkit.InkitClient.ApiClient">
+            <summary>
+                Gets or sets the API client to Inkit's public API
+                https://docs.inkit.com/#authentication
+            </summary>
+            <value>
+                The API client.
+            </value>
+        </member>
+        <member name="P:Inkit.InkitClient.PublicApiUrl">
+            <summary>
+                Gets the public API URL, including the version.
+            </summary>
+            <value>
+                The public API URL.
+            </value>
+        </member>
         <member name="M:Inkit.InkitClient.Send(Inkit.Models.Recipient)">
             <summary>
-            Sends the specified recipient via the WebHook
+                Sends the specified recipient via the WebHook
             </summary>
             <param name="recipient">The recipient.</param>
             <exception cref="T:Inkit.Exceptions.TemplateNotFoundException"></exception>
         </member>
-        <member name="P:Inkit.InkitClient.ApiClient">
-            <summary>
-            Gets or sets the API client to Inkit's public API
-            https://docs.inkit.com/#authentication 
-            </summary>
-            <value>
-            The API client.
-            </value>
-        </member>
         <member name="M:Inkit.InkitClient.CreateApiClient">
             <summary>
-            Creates the API client.
-            https://docs.inkit.com/#authentication
+                Creates the API client.
+                https://docs.inkit.com/#authentication
             </summary>
             <returns></returns>
         </member>
         <member name="M:Inkit.InkitClient.GetContacts">
             <summary>
-            Gets the contacts.
+                Gets the contacts.
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Inkit.InkitClient.PublicApiUrl">
+        <member name="M:Inkit.InkitClient.GetContact(System.String)">
             <summary>
-            Gets the public API URL, including the version.
+            Gets the contact by the Inkit {contact_id}
             </summary>
-            <value>
-            The public API URL.
-            </value>
+            <param name="contactId">The contact identifier.</param>
+            <returns></returns>
         </member>
         <member name="M:Inkit.InkitClient.CreateContact(Inkit.Models.Contact)">
             <summary>
-            Creates the contact.
-            <see cref="!:Https://docs.inkit.com/#post-v1-contacts">https://docs.inkit.com/#post-v1-contacts</see>
+                Creates the contact.
+                <see cref="!:Https://docs.inkit.com/#post-v1-contacts">https://docs.inkit.com/#post-v1-contacts</see>
             </summary>
             <param name="contact">The contact.</param>
             <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.CreateTag(Inkit.Models.Tag)">
+            <summary>
+            Creates the tag.
+            </summary>
+            <param name="tag">The tag.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.GetTags">
+            <summary>
+            Gets all tags from inkit
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.DeserializeBody``1(System.Net.Http.HttpResponseMessage)">
+            <summary>
+                Deserializes the body of the Inkit.io response into a model T
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="response">The response.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.DeserializeBody``1(System.String)">
+            <summary>
+            Deserializes a JSON string into a model T
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="json">The json.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.DeleteContact(Inkit.Models.Contact)">
+            <summary>
+                Deletes the contact from Inkit
+            </summary>
+            <param name="added">The added.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Inkit.InkitClient.DeleteContact(System.String)">
+            <summary>
+                Deletes the contact from Inkit
+            </summary>
+            <param name="contactId">The contact identifier.</param>
+            <returns></returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:Inkit.InkitClient.DeleteTag(System.String)">
+            <summary>
+            Deletes the tag.
+            </summary>
+            <param name="tagId">The tag identifier.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">tagId</exception>
+        </member>
+        <member name="M:Inkit.InkitClient.DeleteItem(System.String,System.String)">
+            <summary>
+            Deletes the item from Inkit 
+            </summary>
+            <param name="resourceName">Name of the resource.</param>
+            <param name="id">The identifier.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">
+            id
+            or
+            resourceName
+            </exception>
+            <exception cref="T:Inkit.Exceptions.ApiException"></exception>
+        </member>
+        <member name="M:Inkit.InkitClient.PostItem``1(System.String,``0)">
+            <summary>
+            HTTP POST the item to Inkit (creates an  item in Inkit).
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="resourceName">Name of the resource.</param>
+            <param name="item">The item.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">
+            item
+            or
+            resourceName
+            </exception>
+            <exception cref="T:Inkit.Exceptions.ApiException"></exception>
         </member>
         <member name="T:Inkit.Models.Address">
             <summary>
@@ -295,6 +425,52 @@
             <summary>
             The country abbreviation
             </summary>
+        </member>
+        <member name="T:Inkit.Models.Tag">
+            <summary>
+                Inkit Tag Model
+                <see cref="!:https://docs.inkit.com/#get-v1-tags-or-get-v1-tags-tag_id" />
+            </summary>
+        </member>
+        <member name="P:Inkit.Models.Tag.Id">
+            <summary>
+                Gets or sets the tag id.
+            </summary>
+            <value>
+                The identifier.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Tag.CreatedAt">
+            <summary>
+                Gets or sets the timestamp when the tag was created
+            </summary>
+            <value>
+                The created at.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Tag.UpdatedAt">
+            <summary>
+                Gets or sets the timestamp when the tag was last modified
+            </summary>
+            <value>
+                The updated at.
+            </value>
+        </member>
+        <member name="P:Inkit.Models.Tag.Name">
+            <summary>
+                Gets or sets the tag name.
+            </summary>
+            <value>
+                The name.
+            </value>
+        </member>
+        <member name="M:Inkit.Models.Tag.ToString">
+            <summary>
+            Returns a <see cref="T:System.String" /> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String" /> that represents this instance.
+            </returns>
         </member>
         <member name="T:Inkit.Models.WebHookResponseModel">
             <summary>

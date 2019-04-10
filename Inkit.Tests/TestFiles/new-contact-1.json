@@ -11,7 +11,7 @@
     "zip": "90210",
     "country": "US"
   },
-  "tags": ["december-campaign"],
+  "tags": [],
   "custom_data": {
     "custom_field_a": "custom data",
     "new_custom_field": "new data"

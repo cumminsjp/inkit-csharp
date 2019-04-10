@@ -1,0 +1,16 @@
+{
+	"address": {
+		"city": "Test city",
+		"country": "US",
+		"state": "CA",
+		"street": "Test street",
+		"zip": "1242"
+	},
+	"company": "Test Company",
+	"custom_data": {
+		"custom key": "custom value"
+	},
+	"first_name": "Bobby",
+	"last_name": "Bobbson",
+	"tags": ["donkey"]
+}
