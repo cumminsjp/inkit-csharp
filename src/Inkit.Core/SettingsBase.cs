@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
+
 // ReSharper disable once CheckNamespace
 namespace Inkit.Core
 {
@@ -18,6 +19,7 @@ namespace Inkit.Core
 
 		public static T Get<T>(string key, bool allowNull, T defaultValue)
 		{
+			
 			var value = ConfigurationManager.AppSettings[key];
 
 			if (string.IsNullOrEmpty(value))

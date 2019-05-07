@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 
-namespace Inkit.Exceptions
+namespace Inkit.Core.Exceptions
 {
 	/// <summary>
 	///     Generic API Exception with HTTP Status Code

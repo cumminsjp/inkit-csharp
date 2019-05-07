@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Security.Permissions;
-using System.Text;
+﻿using System.Net;
 using Newtonsoft.Json.Linq;
 
-namespace Inkit.Models
+namespace Inkit.Core.Models
 {
 	/// <summary>
 	/// 
@@ -26,7 +22,7 @@ namespace Inkit.Models
 		/// <value>
 		/// The data.
 		/// </value>
-		public JObject Data { get; set; }
+		public string Data { get; set; }
 		
 	}
 }

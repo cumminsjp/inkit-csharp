@@ -103,7 +103,7 @@ namespace Inkit.Core
 					return token;
 				}
 
-				token = "https://internal.inkit.io/integrations/iterable/webhook";
+				token = "https://internal.inkit.io/integrations/webhook";
 				Log.Debug($"Inkit Webhook URL obtained from Internal Default.");
 
 				return token;

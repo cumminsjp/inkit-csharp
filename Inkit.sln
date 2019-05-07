@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.438
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inkit", "src\Inkit\Inkit.csproj", "{7620BB1A-CB11-4CD7-B73A-EE2BD1B79894}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inkit.Core", "src\Inkit.Core\Inkit.Core.csproj", "{86E55A6C-0798-4906-BD81-7FA059E17440}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Inkit.Tests", "Inkit.Tests\Inkit.Tests.csproj", "{2FC85789-DDF5-4BC1-BCAF-995288F71D65}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inkit.Tests", "src\Inkit.Tests\Inkit.Tests.csproj", "{FC5862C5-C4FD-4075-AA67-18295701274F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{7620BB1A-CB11-4CD7-B73A-EE2BD1B79894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7620BB1A-CB11-4CD7-B73A-EE2BD1B79894}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7620BB1A-CB11-4CD7-B73A-EE2BD1B79894}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7620BB1A-CB11-4CD7-B73A-EE2BD1B79894}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2FC85789-DDF5-4BC1-BCAF-995288F71D65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2FC85789-DDF5-4BC1-BCAF-995288F71D65}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2FC85789-DDF5-4BC1-BCAF-995288F71D65}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2FC85789-DDF5-4BC1-BCAF-995288F71D65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86E55A6C-0798-4906-BD81-7FA059E17440}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86E55A6C-0798-4906-BD81-7FA059E17440}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86E55A6C-0798-4906-BD81-7FA059E17440}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86E55A6C-0798-4906-BD81-7FA059E17440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC5862C5-C4FD-4075-AA67-18295701274F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC5862C5-C4FD-4075-AA67-18295701274F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC5862C5-C4FD-4075-AA67-18295701274F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC5862C5-C4FD-4075-AA67-18295701274F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

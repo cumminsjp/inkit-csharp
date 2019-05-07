@@ -2,7 +2,7 @@
 using System.Text;
 using Newtonsoft.Json;
 
-namespace Inkit.Models
+namespace Inkit.Core.Models
 {
 	/// <summary>
 	///     Inkit Tag Model

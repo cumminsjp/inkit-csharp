@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
 using Common.Logging;
 using Inkit.Core;
-using Inkit.Models;
+using Inkit.Core.Models;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Inkit.Tests
@@ -28,7 +26,7 @@ namespace Inkit.Tests
 		///     The Log (Common.Logging)
 		/// </summary>
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
@@ -49,25 +47,22 @@ namespace Inkit.Tests
 			var actual = Settings.WebHookApiToken;
 			Log.Debug($"actual={actual}");
 
-			var model = new Recipient()
+			var model = new WebhookRequest
 			{
-				Address = "4704 TAMEO CT",
+				Street = "4704 TAMEO CT",
 				City = "Glen Allen",
 				State = "VA",
-				PostalCode = "23060",
+				Zip = "23060",
 				Country = "USA",
 				FirstName = "Jay",
 				LastName = "Cummins",
 				TemplateId = "12c5618c96184a419257f0744b9d9c76",
-				ApiToken = Settings.PublicApiAuthorizationToken
+				ApiToken = actual
 			};
-			
+
 			var json = JsonConvert.SerializeObject(model, Formatting.Indented);
 
 			Assert.IsNotEmpty(json);
 		}
 	}
 }
- 
-
-

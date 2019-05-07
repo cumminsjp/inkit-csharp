@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Inkit.Exceptions
+namespace Inkit.Core.Exceptions
 {
 	/// <summary>
 	/// A not found exception

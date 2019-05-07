@@ -1,12 +1,12 @@
 ﻿using System;
 using Newtonsoft.Json.Linq;
 
-namespace Inkit.Exceptions
+namespace Inkit.Core.Exceptions
 {
 	/// <summary>
 	/// Exception when template is not found
 	/// </summary>
-	/// <seealso cref="Inkit.Exceptions.NotFoundException" />
+	/// <seealso cref="NotFoundException" />
 	public class TemplateNotFoundException : NotFoundException
 	{
 		/// <summary>

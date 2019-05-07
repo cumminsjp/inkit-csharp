@@ -1,27 +1,29 @@
-﻿using Common.Logging;
-using Inkit.Core;
-using Inkit.Exceptions;
-using Inkit.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Common.Logging;
+using Inkit.Core.Exceptions;
+using Inkit.Core.Interfaces;
+using Inkit.Core.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace Inkit
+namespace Inkit.Core
 {
+ 
 	/// <summary>
 	/// Inkit API Client
 	/// https://docs.inkit.com
 	/// 
 	/// </summary>
-	public class InkitClient
+	public class InkitClient : IWebHook
 	{
 		/// <summary>
 		///     The Log (Common.Logging)
@@ -55,24 +57,90 @@ namespace Inkit
 		/// <summary>
 		///     Sends the specified recipient via the WebHook
 		/// </summary>
-		/// <param name="recipient">The recipient.</param>
+		/// <param name="webhookRequest">The recipient.</param>
 		/// <exception cref="TemplateNotFoundException"></exception>
-		public async Task<WebHookResponseModel> Send(Recipient recipient)
+		public async Task<WebHookResponseModel> Send(IWebhookRequest webhookRequest)
 		{
+			if (webhookRequest == null)
+				throw new ArgumentNullException(nameof(webhookRequest));
+
+			if (webhookRequest.TemplateId == null)
+				throw new ArgumentNullException(nameof(webhookRequest.TemplateId));
+
+			if (string.IsNullOrWhiteSpace(webhookRequest.TemplateId))
+				throw new ArgumentNullException(nameof(webhookRequest.TemplateId));
+			
 			// TODO: Implement validation
 			var url = Settings.WebHookUrl;
 
 			var response = new WebHookResponseModel();
 
-			var jo = JObject.FromObject(recipient);
-			var dict = jo.ToObject<Dictionary<string, string>>();
+			var jo = JObject.FromObject(webhookRequest);
 
-			response.Data = jo;
+
+			
+
+			var dict = jo.ToObject<Dictionary<string, string>>();
+		 
+			// See http://support.inkit.io/integrations/generic-inkit-webhook-integration
+			/*
+first_name
+last_name
+address
+address2
+city
+state (must be a 2 character code, e.g. CA)
+zip
+country (must be a 2 character code, e.g. US)
+template_id (Template ID from Inkit’s end)
+api_token (Your Inkit API key) 
+Optional Fields
+
+company
+custom_data*
+			 */
+
+			//var dict = new Dictionary<string, string>
+			//{
+			//	["first_name"] = webhookRequest.FirstName,
+			//	["last_name"] = webhookRequest.LastName,
+			//	["email"] = webhookRequest.Email,
+			//	["address"] = webhookRequest.Street,
+			//	["address2"] = webhookRequest.Unit,
+			//	["city"] = webhookRequest.City,
+			//	["state"] = webhookRequest.State,
+			//	["zip"] = webhookRequest.Zip,
+			//	["country"] = webhookRequest.Country,
+			//	["template_id"] = webhookRequest.TemplateId,
+			//	["api_token"] = webhookRequest.ApiToken
+			//};
+
+			if (string.IsNullOrWhiteSpace(webhookRequest.ApiToken))
+			{
+				dict["api_token"] = Settings.WebHookApiToken;
+			}
+
+			var badKeys = dict.Where(pair => string.IsNullOrWhiteSpace(pair.Value))
+				.Select(pair => pair.Key)
+				.ToList();
+			foreach (var badKey in badKeys)
+			{
+				dict.Remove(badKey);
+			}
 
 			using (var client = new HttpClient())
 			{
+				var httpMethod = HttpMethod.Post;
+				string logPrefix = $"{httpMethod} -> {url}";
 				client.DefaultRequestHeaders.Add("Authorization", Settings.PublicApiAuthorizationToken);
-				var req = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(dict) };
+
+				var json = JsonConvert.SerializeObject(dict);
+
+				var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+				Console.WriteLine(json);
+				
+				var req = new HttpRequestMessage(httpMethod, url) { Content = content };
 
 				var stopwatch = Stopwatch.StartNew();
 				try
@@ -80,27 +148,29 @@ namespace Inkit
 					var res = await client.SendAsync(req);
 
 					stopwatch.Stop();
-					Log.Debug($"Something took {stopwatch.ElapsedMilliseconds}ms.");
+					Log.Debug($"{logPrefix} took {stopwatch.ElapsedMilliseconds}ms.");
 
 					if (stopwatch.ElapsedMilliseconds > 1000)
-						Log.Warn($"Something took {stopwatch.ElapsedMilliseconds}ms but expected to take <1000ms");
-
+						Log.Warn($"{logPrefix} took {stopwatch.ElapsedMilliseconds}ms but expected to take <1000ms");
 					Log.Debug($"HTTP Post To: {url} status: {res.StatusCode}");
 
 					response.Status = res.StatusCode;
 					var contentData = await res.Content.ReadAsStringAsync();
-					var responseJsonObject = JObject.Parse(contentData);
+					
+					if (!string.IsNullOrWhiteSpace(contentData))
+						response.Data = contentData;
 
 					switch (res.StatusCode)
 					{
 						case HttpStatusCode.NotFound:
+							var responseJsonObject = JObject.Parse(contentData);
 							throw new TemplateNotFoundException(responseJsonObject);
 						case HttpStatusCode.Accepted:
-							response.Data = responseJsonObject;
+							
 							break;
 
-						case HttpStatusCode.AlreadyReported:
-							break;
+						//case HttpStatusCode.AlreadyReported:
+						//	break;
 
 						case HttpStatusCode.Ambiguous:
 							break;
@@ -120,14 +190,14 @@ namespace Inkit
 						case HttpStatusCode.Created:
 							break;
 
-						case HttpStatusCode.EarlyHints:
-							break;
+						//case HttpStatusCode.EarlyHints:
+						//	break;
 
 						case HttpStatusCode.ExpectationFailed:
 							break;
 
-						case HttpStatusCode.FailedDependency:
-							break;
+						//case HttpStatusCode.FailedDependency:
+						//	break;
 
 						case HttpStatusCode.Forbidden:
 							break;
@@ -144,11 +214,11 @@ namespace Inkit
 						case HttpStatusCode.HttpVersionNotSupported:
 							break;
 
-						case HttpStatusCode.IMUsed:
-							break;
+						//case HttpStatusCode.IMUsed:
+						//	break;
 
-						case HttpStatusCode.InsufficientStorage:
-							break;
+						//case HttpStatusCode.InsufficientStorage:
+						//	break;
 
 						case HttpStatusCode.InternalServerError:
 							break;
@@ -156,26 +226,26 @@ namespace Inkit
 						case HttpStatusCode.LengthRequired:
 							break;
 
-						case HttpStatusCode.Locked:
-							break;
+						//case HttpStatusCode.Locked:
+						//	break;
 
-						case HttpStatusCode.LoopDetected:
-							break;
+						//case HttpStatusCode.LoopDetected:
+						//	break;
 
 						case HttpStatusCode.MethodNotAllowed:
 							break;
 
-						case HttpStatusCode.MisdirectedRequest:
-							break;
+						//case HttpStatusCode.MisdirectedRequest:
+						//	break;
 
 						case HttpStatusCode.Moved:
 							break;
 
-						case HttpStatusCode.MultiStatus:
-							break;
+						//case HttpStatusCode.MultiStatus:
+						//	break;
 
-						case HttpStatusCode.NetworkAuthenticationRequired:
-							break;
+						//case HttpStatusCode.NetworkAuthenticationRequired:
+						//	break;
 
 						case HttpStatusCode.NoContent:
 							break;
@@ -186,8 +256,8 @@ namespace Inkit
 						case HttpStatusCode.NotAcceptable:
 							break;
 
-						case HttpStatusCode.NotExtended:
-							break;
+						//case HttpStatusCode.NotExtended:
+						//	break;
 
 						case HttpStatusCode.NotImplemented:
 							break;
@@ -204,17 +274,17 @@ namespace Inkit
 						case HttpStatusCode.PaymentRequired:
 							break;
 
-						case HttpStatusCode.PermanentRedirect:
-							break;
+						//case HttpStatusCode.PermanentRedirect:
+						//	break;
 
 						case HttpStatusCode.PreconditionFailed:
 							break;
 
-						case HttpStatusCode.PreconditionRequired:
-							break;
+						//case HttpStatusCode.PreconditionRequired:
+						//	break;
 
-						case HttpStatusCode.Processing:
-							break;
+						//case HttpStatusCode.Processing:
+						//	break;
 
 						case HttpStatusCode.ProxyAuthenticationRequired:
 							break;
@@ -231,8 +301,8 @@ namespace Inkit
 						case HttpStatusCode.RequestEntityTooLarge:
 							break;
 
-						case HttpStatusCode.RequestHeaderFieldsTooLarge:
-							break;
+						//case HttpStatusCode.RequestHeaderFieldsTooLarge:
+						//	break;
 
 						case HttpStatusCode.RequestTimeout:
 							break;
@@ -249,17 +319,17 @@ namespace Inkit
 						case HttpStatusCode.SwitchingProtocols:
 							break;
 
-						case HttpStatusCode.TooManyRequests:
-							break;
+						//case HttpStatusCode.TooManyRequests:
+						//	break;
 
 						case HttpStatusCode.Unauthorized:
 							break;
 
-						case HttpStatusCode.UnavailableForLegalReasons:
-							break;
+						//case HttpStatusCode.UnavailableForLegalReasons:
+						//	break;
 
-						case HttpStatusCode.UnprocessableEntity:
-							break;
+						//case HttpStatusCode.UnprocessableEntity:
+						//	break;
 
 						case HttpStatusCode.UnsupportedMediaType:
 							break;
@@ -273,8 +343,8 @@ namespace Inkit
 						case HttpStatusCode.UseProxy:
 							break;
 
-						case HttpStatusCode.VariantAlsoNegotiates:
-							break;
+						//case HttpStatusCode.VariantAlsoNegotiates:
+						//	break;
 
 						default:
 							throw new ArgumentOutOfRangeException();
@@ -286,7 +356,7 @@ namespace Inkit
 				{
 					Log.Error(ex);
 					Log.Error($"url={url}");
-					Log.Error($"recipient={JsonConvert.SerializeObject(recipient, Formatting.Indented)}");
+					Log.Error($"recipient={JsonConvert.SerializeObject(webhookRequest, Formatting.Indented)}");
 
 					throw;
 				}
@@ -341,7 +411,7 @@ namespace Inkit
 
 			var result = await ApiClient.GetStringAsync(url);
 
-			return await DeserializeBody<Contact>(result);
+			return DeserializeBody<Contact>(result);
 		}
 
 		/// <summary>
@@ -397,7 +467,7 @@ namespace Inkit
 
 			Log.Debug($"HTTP GET: {url} result: {result}");
 
-			return await DeserializeBody<Tag[]>(result);
+			return DeserializeBody<Tag[]>(result);
 		}
 
 		/// <summary>
@@ -410,7 +480,7 @@ namespace Inkit
 		{
 			var responseContent = await response.Content.ReadAsStringAsync();
 
-			return await DeserializeBody<T>(responseContent);
+			return DeserializeBody<T>(responseContent);
 		}
 
 		/// <summary>
@@ -419,7 +489,7 @@ namespace Inkit
 		/// <typeparam name="T"></typeparam>
 		/// <param name="json">The json.</param>
 		/// <returns></returns>
-		private async Task<T> DeserializeBody<T>(string json)
+		private T DeserializeBody<T>(string json)
 		{
 			var responseJson = JObject.Parse(json);
 

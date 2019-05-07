@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 
-namespace Inkit.Helpers
+namespace Inkit.Core.Helpers
 {
 	/// <summary>
 	/// Helper class for IEnumerable

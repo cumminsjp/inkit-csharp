@@ -1,23 +1,22 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Common.Logging;
 using Inkit.Core;
-using Inkit.Helpers;
-using Inkit.Models;
+using Inkit.Core.Helpers;
+using Inkit.Core.Models;
 using Inkit.Tests.Helpers;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 
 namespace Inkit.Tests
 {
 	/// <summary>
-	/// Some tests to use during development.  These are not unit tests.
+	///     Some tests to use during development.  These are not unit tests.
 	/// </summary>
 	[TestFixture]
+	[Ignore("These aren't unit tests. Just tests for isolating API issues.  ")]
 	public class PublicApiTests
 	{
 		[SetUp]
@@ -36,7 +35,7 @@ namespace Inkit.Tests
 		///     The Log (Common.Logging)
 		/// </summary>
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
@@ -48,61 +47,6 @@ namespace Inkit.Tests
 		{
 			Log.Debug("Enter");
 		}
-
-		[Test]
-		public void GetContacts_Test()
-		{
-			Log.Debug("Enter");
-
-
-			var client = new InkitClient();
-
-			var result = client.GetContacts().Result;
-
-			var contacts = result.ToObject<Contact[]>();
-
-			Assert.IsNotNull(contacts);
-
-			Console.WriteLine(contacts.Select(x => x.ToString()).ToCharacterSeparatedValueString(Environment.NewLine));
-
-			foreach (var contact in contacts)
-			{
-				Console.WriteLine($"{contact.Id} : {contact.LastName}, {contact.FirstName}");
-			}
-
-
-		}
-
-		[Test]
-		public void GetContact_ById_Test()
-		{
-			Log.Debug("Enter");
-
-			var client = new InkitClient();
-
-			var result = client.GetContacts().Result;
-
-			var contactId = result.First().Value<string>("id");
-
-			var contact = client.GetContact(contactId).Result;
-			
-			Assert.IsNotNull(contact);
-		}
-
-		[Test]
-		public void GetTags_Test()
-		{
-			Log.Debug("Enter");
-
-			var client = new InkitClient();
-
-			var result = client.GetTags().Result;
-
-			Console.WriteLine(result.Select(x => x.ToString()).ToCharacterSeparatedValueString(Environment.NewLine));
-		}
-
-		
-
 
 
 		[Test]
@@ -122,16 +66,15 @@ namespace Inkit.Tests
 
 			var added = client.CreateContact(contact).Result;
 
-			Assert.IsNotNull(added );
+			Assert.IsNotNull(added);
 			Assert.False(string.IsNullOrWhiteSpace(added.Id));
-			
+
 			client.DeleteContact(added.Id).Wait();
-			
+
 			Assert.IsNotNull(added);
 
 			// Assert.False(string.IsNullOrWhiteSpace(added.Id));
 			// Assert.False(string.IsNullOrWhiteSpace(added.Source));
-			
 
 
 			// var result = client.GetContacts().Result;
@@ -139,7 +82,55 @@ namespace Inkit.Tests
 			// Assert.IsNotNull(result);
 		}
 
-		
+		[Test]
+		public void GetContact_ById_Test()
+		{
+			Log.Debug("Enter");
+
+			var client = new InkitClient();
+
+			var result = client.GetContacts().Result;
+
+			var contactId = result.First().Value<string>("id");
+
+			var contact = client.GetContact(contactId).Result;
+
+			Assert.IsNotNull(contact);
+		}
+
+		[Test]
+		public void GetContacts_Test()
+		{
+			Log.Debug("Enter");
+
+
+			var client = new InkitClient();
+
+			var result = client.GetContacts().Result;
+
+			var contacts = result.ToObject<Contact[]>();
+
+			Assert.IsNotNull(contacts);
+
+			Console.WriteLine(contacts.Select(x => x.ToString()).ToCharacterSeparatedValueString(Environment.NewLine));
+
+			foreach (var contact in contacts)
+				Console.WriteLine($"{contact.Id} : {contact.LastName}, {contact.FirstName}");
+		}
+
+		[Test]
+		public void GetTags_Test()
+		{
+			Log.Debug("Enter");
+
+			var client = new InkitClient();
+
+			var result = client.GetTags().Result;
+
+			Console.WriteLine(result.Select(x => x.ToString()).ToCharacterSeparatedValueString(Environment.NewLine));
+		}
+
+
 		// client.DeleteTag("9a0c73af96844ede9f17330c052792d8").Wait();
 
 
@@ -148,15 +139,14 @@ namespace Inkit.Tests
 		{
 			Log.Debug("Enter");
 
-			var tagIds = new List<string>()
+			var tagIds = new List<string>
 			{
-				"4a903d9814d64c1d977c01f9966517ca"
+				"9a0c73af96844ede9f17330c052792d8"
 			};
 
 			var client = new InkitClient();
 
 			foreach (var id in tagIds)
-			{
 				try
 				{
 					client.DeleteTag(id).Wait();
@@ -165,7 +155,6 @@ namespace Inkit.Tests
 				{
 					// throw;
 				}
-			}
 		}
 
 		[Test]
@@ -177,7 +166,7 @@ namespace Inkit.Tests
 			var client = new InkitClient();
 
 
-			Tag tag = new Tag()
+			var tag = new Tag
 			{
 				Name = "testtag3"
 			};
@@ -185,7 +174,7 @@ namespace Inkit.Tests
 
 			var added = client.CreateTag(tag).Result;
 
- 
+
 			Assert.IsNotNull(added);
 			Assert.IsNotEmpty(added.Id);
 			Assert.IsNotEmpty(added.Name);
@@ -197,19 +186,13 @@ namespace Inkit.Tests
 			Console.WriteLine($"Test Tag: {added} deleted.");
 
 
-
 			// Assert.False(string.IsNullOrWhiteSpace(added.Id));
 			// Assert.False(string.IsNullOrWhiteSpace(added.Source));
-			
 
 
 			// var result = client.GetContacts().Result;
 			// Console.WriteLine(JsonConvert.SerializeObject(result));
 			// Assert.IsNotNull(result);
 		}
-
 	}
 }
-
-
-

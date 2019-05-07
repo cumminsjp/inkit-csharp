@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Inkit\Inkit.csproj" />
+    <ProjectReference Include="..\Inkit.Core\Inkit.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

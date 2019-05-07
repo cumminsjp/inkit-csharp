@@ -1,12 +1,13 @@
 ﻿using System.Text;
+using Inkit.Core.Interfaces;
 using Newtonsoft.Json;
 
-namespace Inkit.Models
+namespace Inkit.Core.Models
 {
 	/// <summary>
 	///     An Inkit.io Address record
 	/// </summary>
-	public class Address
+	public class Address : IAddress
 	{
 		/// <summary>
 		///     Gets or sets the street (excluding unit) of a mailing address

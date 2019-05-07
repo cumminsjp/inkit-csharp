@@ -1,12 +1,11 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Common.Logging;
-using Inkit.Core;
 using NUnit.Framework;
 
 namespace Inkit.Tests
 {
 	[TestFixture]
-	public class TestClass
+	public class ClientTests
 	{
 		[SetUp]
 		public void DerivedSetUp()
@@ -24,7 +23,7 @@ namespace Inkit.Tests
 		///     The Log (Common.Logging)
 		/// </summary>
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		
+
 		[OneTimeSetUp]
 		public void RunBeforeAnyTests()
 		{
@@ -35,17 +34,6 @@ namespace Inkit.Tests
 		public void RunAfterAnyTests()
 		{
 			Log.Debug("Enter");
-		}
-
-		[Test]
-		public void Get_WebHookApiToken_Test()
-		{
-			Log.Debug("Enter");
-
-			var actual = Settings.WebHookApiToken;
-			Log.Debug($"actual={actual}");
-
-			Assert.IsNotNull(actual);
 		}
 	}
 }
