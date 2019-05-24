@@ -9,19 +9,19 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Common.Logging;
+using FluentValidation;
 using Inkit.Core.Exceptions;
 using Inkit.Core.Interfaces;
 using Inkit.Core.Models;
+using Inkit.Core.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Inkit.Core
 {
- 
 	/// <summary>
-	/// Inkit API Client
-	/// https://docs.inkit.com
-	/// 
+	///     Inkit API Client
+	///     https://docs.inkit.com
 	/// </summary>
 	public class InkitClient : IWebHook
 	{
@@ -69,8 +69,12 @@ namespace Inkit.Core
 
 			if (string.IsNullOrWhiteSpace(webhookRequest.TemplateId))
 				throw new ArgumentNullException(nameof(webhookRequest.TemplateId));
-			
-			// TODO: Implement validation
+
+			// Need to add the ApiToken before validation is called
+			if (string.IsNullOrWhiteSpace(webhookRequest.ApiToken)) webhookRequest.ApiToken = Settings.WebHookApiToken;
+
+			ValidateWebRequest(webhookRequest);
+
 			var url = Settings.WebHookUrl;
 
 			var response = new WebHookResponseModel();
@@ -78,10 +82,8 @@ namespace Inkit.Core
 			var jo = JObject.FromObject(webhookRequest);
 
 
-			
-
 			var dict = jo.ToObject<Dictionary<string, string>>();
-		 
+
 			// See http://support.inkit.io/integrations/generic-inkit-webhook-integration
 			/*
 first_name
@@ -115,23 +117,17 @@ custom_data*
 			//	["api_token"] = webhookRequest.ApiToken
 			//};
 
-			if (string.IsNullOrWhiteSpace(webhookRequest.ApiToken))
-			{
-				dict["api_token"] = Settings.WebHookApiToken;
-			}
+			if (string.IsNullOrWhiteSpace(webhookRequest.ApiToken)) dict["api_token"] = Settings.WebHookApiToken;
 
 			var badKeys = dict.Where(pair => string.IsNullOrWhiteSpace(pair.Value))
 				.Select(pair => pair.Key)
 				.ToList();
-			foreach (var badKey in badKeys)
-			{
-				dict.Remove(badKey);
-			}
+			foreach (var badKey in badKeys) dict.Remove(badKey);
 
 			using (var client = new HttpClient())
 			{
 				var httpMethod = HttpMethod.Post;
-				string logPrefix = $"{httpMethod} -> {url}";
+				var logPrefix = $"{httpMethod} -> {url}";
 				client.DefaultRequestHeaders.Add("Authorization", Settings.PublicApiAuthorizationToken);
 
 				var json = JsonConvert.SerializeObject(dict);
@@ -139,8 +135,8 @@ custom_data*
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 				Console.WriteLine(json);
-				
-				var req = new HttpRequestMessage(httpMethod, url) { Content = content };
+
+				var req = new HttpRequestMessage(httpMethod, url) {Content = content};
 
 				var stopwatch = Stopwatch.StartNew();
 				try
@@ -156,7 +152,7 @@ custom_data*
 
 					response.Status = res.StatusCode;
 					var contentData = await res.Content.ReadAsStringAsync();
-					
+
 					if (!string.IsNullOrWhiteSpace(contentData))
 						response.Data = contentData;
 
@@ -166,7 +162,7 @@ custom_data*
 							var responseJsonObject = JObject.Parse(contentData);
 							throw new TemplateNotFoundException(responseJsonObject);
 						case HttpStatusCode.Accepted:
-							
+
 							break;
 
 						//case HttpStatusCode.AlreadyReported:
@@ -221,6 +217,8 @@ custom_data*
 						//	break;
 
 						case HttpStatusCode.InternalServerError:
+
+
 							break;
 
 						case HttpStatusCode.LengthRequired:
@@ -364,6 +362,24 @@ custom_data*
 		}
 
 		/// <summary>
+		/// Validates the web request model
+		/// </summary>
+		/// <param name="webhookRequest">The webhook request.</param>
+		/// <exception cref="ValidationException"></exception>
+		private static void ValidateWebRequest(IWebhookRequest webhookRequest)
+		{
+			var validator = new WebhookRequestValidator();
+
+			var validationResult = validator.Validate(webhookRequest);
+
+			if (!validationResult.IsValid)
+				throw new ValidationException(
+					$"Webhook request failed {validationResult.Errors.Count} validation rules."
+					, validationResult.Errors);
+		}
+
+
+		/// <summary>
 		///     Creates the API client.
 		///     https://docs.inkit.com/#authentication
 		/// </summary>
@@ -394,11 +410,11 @@ custom_data*
 
 			// responseObject["response"];
 
-			return (JArray)responseObject["body"];
+			return (JArray) responseObject["body"];
 		}
 
 		/// <summary>
-		/// Gets the contact by the Inkit {contact_id}
+		///     Gets the contact by the Inkit {contact_id}
 		/// </summary>
 		/// <param name="contactId">The contact identifier.</param>
 		/// <returns></returns>
@@ -446,7 +462,7 @@ custom_data*
 		}
 
 		/// <summary>
-		/// Creates the tag.
+		///     Creates the tag.
 		/// </summary>
 		/// <param name="tag">The tag.</param>
 		/// <returns></returns>
@@ -456,7 +472,7 @@ custom_data*
 		}
 
 		/// <summary>
-		/// Gets all tags from inkit
+		///     Gets all tags from inkit
 		/// </summary>
 		/// <returns></returns>
 		public async Task<IEnumerable<Tag>> GetTags()
@@ -484,7 +500,7 @@ custom_data*
 		}
 
 		/// <summary>
-		/// Deserializes a JSON string into a model T
+		///     Deserializes a JSON string into a model T
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="json">The json.</param>
@@ -523,7 +539,7 @@ custom_data*
 		}
 
 		/// <summary>
-		/// Deletes the tag.
+		///     Deletes the tag.
 		/// </summary>
 		/// <param name="tagId">The tag identifier.</param>
 		/// <returns></returns>
@@ -539,15 +555,15 @@ custom_data*
 		}
 
 		/// <summary>
-		/// Deletes the item from Inkit 
+		///     Deletes the item from Inkit
 		/// </summary>
 		/// <param name="resourceName">Name of the resource.</param>
 		/// <param name="id">The identifier.</param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException">
-		/// id
-		/// or
-		/// resourceName
+		///     id
+		///     or
+		///     resourceName
 		/// </exception>
 		/// <exception cref="ApiException"></exception>
 		private async Task DeleteItem(string resourceName, string id)
@@ -578,16 +594,16 @@ custom_data*
 		}
 
 		/// <summary>
-		/// HTTP POST the item to Inkit (creates an  item in Inkit).
+		///     HTTP POST the item to Inkit (creates an  item in Inkit).
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="resourceName">Name of the resource.</param>
 		/// <param name="item">The item.</param>
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException">
-		/// item
-		/// or
-		/// resourceName
+		///     item
+		///     or
+		///     resourceName
 		/// </exception>
 		/// <exception cref="ApiException"></exception>
 		private async Task<T> PostItem<T>(string resourceName, T item)
@@ -608,13 +624,12 @@ custom_data*
 			var content = new StringContent(json, Encoding.UTF8, "application/json");
 
 			var response = await ApiClient.PostAsync(url, content);
-			
+
 			if (response.StatusCode == HttpStatusCode.Created)
 			{
 				var added = await DeserializeBody<T>(response);
 
 				return added;
-
 			}
 
 			var errorMessage =
@@ -622,8 +637,6 @@ custom_data*
 			Log.Error(errorMessage);
 
 			throw new ApiException(response.StatusCode, errorMessage);
-
 		}
-
 	}
 }
