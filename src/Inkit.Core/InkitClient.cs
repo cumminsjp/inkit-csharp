@@ -62,7 +62,9 @@ namespace Inkit.Core
 		public async Task<WebHookResponseModel> Send(IWebhookRequest webhookRequest)
 		{
 			if (webhookRequest == null)
+			{
 				throw new ArgumentNullException(nameof(webhookRequest));
+			}
 
 			if (webhookRequest.TemplateId == null)
 				throw new ArgumentNullException(nameof(webhookRequest.TemplateId));
@@ -72,6 +74,9 @@ namespace Inkit.Core
 
 			// Need to add the ApiToken before validation is called
 			if (string.IsNullOrWhiteSpace(webhookRequest.ApiToken)) webhookRequest.ApiToken = Settings.WebHookApiToken;
+
+			if (string.IsNullOrWhiteSpace(webhookRequest.FirstName))
+				webhookRequest.FirstName = ">";
 
 			ValidateWebRequest(webhookRequest);
 
@@ -345,7 +350,17 @@ custom_data*
 						//	break;
 
 						default:
-							throw new ArgumentOutOfRangeException();
+							if ((int)res.StatusCode == 422)
+							{
+								Log.Error("Status Code 422 Received.");
+							}
+							else
+							{
+								throw new ArgumentOutOfRangeException();
+							}
+
+							break;
+							
 					}
 
 					return response;
@@ -377,8 +392,7 @@ custom_data*
 					$"Webhook request failed {validationResult.Errors.Count} validation rules."
 					, validationResult.Errors);
 		}
-
-
+		
 		/// <summary>
 		///     Creates the API client.
 		///     https://docs.inkit.com/#authentication

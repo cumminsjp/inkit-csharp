@@ -15,11 +15,14 @@ namespace Inkit.Core.Validation
 		/// </summary>
 		public WebhookRequestValidator()
 		{
-			RuleFor(r => r.LastName).NotNull();
+			RuleFor(r => r.FirstName).NotNull();
+
+			RuleFor(r => r.LastName).NotNull().MaximumLength(39);
+
 			RuleFor(r => r.Street).NotNull();
 			RuleFor(r => r.Zip).NotNull();
 			RuleFor(r => r.City).NotNull();
-			RuleFor(r => r.State).NotNull();
+			RuleFor(r => r.State).NotNull().Length(2);
 			RuleFor(r => r.TemplateId).NotNull();
 			RuleFor(r => r.ApiToken).NotNull();
 			RuleFor(r => r.Country).NotNull().Length(2);
