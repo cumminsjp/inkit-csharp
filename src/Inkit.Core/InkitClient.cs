@@ -134,6 +134,8 @@ custom_data*
 				var httpMethod = HttpMethod.Post;
 				var logPrefix = $"{httpMethod} -> {url}";
 				client.DefaultRequestHeaders.Add("Authorization", Settings.PublicApiAuthorizationToken);
+				client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");  
+				 
 
 				var json = JsonConvert.SerializeObject(dict);
 
